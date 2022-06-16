@@ -18,7 +18,7 @@ float trapezio (int a,int b) {
       x += h;
     }
     float p = h * ((r(xo) + r(xn)) / 2 + soma);
-    printf("soma %d\n", p);
+    printf("\nsoma %f\n", p);
   return p;
 };
 
@@ -58,7 +58,7 @@ int main(void)
   };
   printf("a = %d e b = %d", pesquisadores[0].a, pesquisadores[0].b);
   int l = trapezio(pesquisadores[0].a, pesquisadores[0].b);
-  printf("valor retornado do trapezio: %d\n", pesquisadores[0].r);
+  printf("valor retornado do trapezio: %f\n", l);
   
   printf("pesquisadores\n");
   for (int k = 0; k < n; k++)
