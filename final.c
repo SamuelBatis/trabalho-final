@@ -13,20 +13,83 @@ float trapezio(int a, int b, int num)
 {
   int xn = b;
   int xo = a;
-  int n = num;
+  int n = 2;
   float p;
   float h = (xn - xo) / n;
   float x = xo + h;
   float soma = 0;
   for (int i = 1; i != n; i++)
   {
-      soma += r(x);
-      x += h;
-    }
+    soma += r(x);
+    x += h;
+  }
   p = h * ((r(xo) + r(xn)) / 2 + soma);
-  printf("h %f\n", h);
   return p;
 };
+
+static const char * unidades[]  = { "Zero", "Um", "Dois", "Tres", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove" };
+static const char * dez_vinte[] = { "", "Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezesseis", "Dezessete", "Dezoito", "Dezenove" };
+static const char * dezenas[]   = { "", "Dez", "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" };
+static const char * centenas[]  = { "", "Cento", "Duzentos", "Trezentos", "Quatrocentos", "Quinhentos", "Seiscentos", "Setecentos", "Oitocentos", "Novecentos" };
+
+
+char * strcatb( char * dst, const char * src )
+{
+    size_t len = strlen(src);
+    memmove( dst + len, dst, strlen(dst) + 1 );
+    memcpy( dst, src, len );
+    return dst;
+}
+
+
+char * traduzir_numero( char * nome, int n )
+{
+    int c = n / 100;
+    int d = n / 10 - c * 10;
+    int u = n - (n / 10) * 10;
+    int dv = d * 10 + u;
+
+
+    strcpy( nome, unidades[ u ] );
+
+    if( n < 10 )
+        return nome;
+
+    if ( (dv > 10) && (dv < 20) )
+    {
+        strcpy( nome, dez_vinte[ dv - 10 ] );
+    }
+    else
+    {
+        if( u == 0 )
+        {
+            strcpy( nome, dezenas[ d ] );
+        }
+        else
+        {
+            strcatb( nome, " e " );
+            strcatb( nome, dezenas[d] );
+        }
+    }
+
+    if( n < 100 )
+        return nome;
+
+    if( (d == 0) && ( u == 0 ) )
+    {
+        if( c == 1 )
+            strcpy( nome, "Cem" );
+        else
+            strcpy( nome, centenas[c] );
+    }
+    else
+    {
+        strcatb( nome, " e " );
+        strcatb( nome, centenas[c] );
+    }
+
+    return nome;
+}
 
 int main()
 {
@@ -59,26 +122,23 @@ int main()
   // chamada das funçoes
   for (int k = 0; k < n; k++)
   {
-    printf("A e B dentro do for %d, %d\n", pesquisadores[k].a, pesquisadores[k].b);
     float aux = trapezio(pesquisadores[k].a, pesquisadores[k].b, n);
-    printf(" ok %f", aux);
     pesquisadores[k].r = aux;
   }
-  printf("\na = %d e b = %d\n", pesquisadores[0].a, pesquisadores[0].b);
-  printf("valor retornado do trapezio: %.2f\n", pesquisadores[0].r);
+
+ /*char extenso[100];
+  printf("%s", c);*/
 
   // output
-  printf("pesquisadores %d\n", n);
-  printf("periodo   nome do pesquisador  Intervalo[a,b]  Valor proporcional");
+  printf("periodo  nome do pesquisador  Intervalo[a,b]  Valor proporcional\n");
   for (int k = 0; k < n; k++)
   {
+    char extenso[100];
     double rr = pesquisadores[k].r + 1200;
-    printf("\n%d          %s                   [%d, %d]           %.2f\n",
-           k + 1,
-           pesquisadores[k].nome,
-           pesquisadores[k].a,
-           pesquisadores[k].b,
-           rr);
+    printf("%s\t", traduzir_numero(extenso, k + 1));
+    printf("%s\t", pesquisadores[k].nome);
+    printf("\t\t[%d, %d]", pesquisadores[k].a, pesquisadores[k].b);
+    printf("\t\t%.2f    \n", rr);
   }
 
   return 0;
